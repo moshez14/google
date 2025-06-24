@@ -14,9 +14,9 @@ genai.configure(api_key="AIzaSyDu_8p38ogl6tNtN8Np7KMzGjacmoIGCPE")
 
 # Create the model (use gemini-1.5-flash or gemini-1.5-pro)
 model = genai.GenerativeModel("gemini-1.5-flash")
-
+mime_type = "video/mp4"
 # Upload the video file
-uploaded_file = genai.upload_file(f"/var/tmp/{file_path}")
+uploaded_file = genai.upload_file(f"/var/tmp/{file_path}.mp4",mime_type="video/mp4")
 while uploaded_file.state.name != "ACTIVE":
     #print(f"Waiting for file to become ACTIVE... Current state: {uploaded_file.state.name}")
     time.sleep(1)
@@ -26,7 +26,7 @@ while uploaded_file.state.name != "ACTIVE":
 #print(f"Question:{video_question}")
 response = model.generate_content([
     uploaded_file,
-    f"{video_question}" 
+    f"{video_question}",
 ])
 
 # Print the result
