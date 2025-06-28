@@ -1,34 +1,41 @@
-import google.generativeai as genai
 import sys
+from google import genai
+from google.genai import types
 import time
+import os
 
-# Check for filename argument
+# Check for arguments
 if len(sys.argv) != 3:
     print(f"Usage: {sys.argv[0]} <path-to-video> <question>")
     sys.exit(1)
 
-file_path = sys.argv[1]
-video_question = sys.argv[2]
-# Configure API key
-genai.configure(api_key="AIzaSyDu_8p38ogl6tNtN8Np7KMzGjacmoIGCPE")
+filename = sys.argv[1]
 
-# Create the model (use gemini-1.5-flash or gemini-1.5-pro)
-model = genai.GenerativeModel("gemini-1.5-flash")
-mime_type = "video/mp4"
-# Upload the video file
-uploaded_file = genai.upload_file(f"/var/tmp/{file_path}.mp4",mime_type="video/mp4")
+if not filename.endswith(".mp4"):
+    filename += ".mp4"
+file_path = f"/var/tmp/{filename}"
+video_question = sys.argv[2]
+
+# Initialize client with API key
+client = genai.Client(api_key="AIzaSyDu_8p38ogl6tNtN8Np7KMzGjacmoIGCPE")
+
+# Upload video file
+uploaded_file = client.files.upload(file=file_path)
+
 while uploaded_file.state.name != "ACTIVE":
     #print(f"Waiting for file to become ACTIVE... Current state: {uploaded_file.state.name}")
     time.sleep(1)
-    uploaded_file = genai.get_file(uploaded_file.name)
+    uploaded_file = client.files.get(name=uploaded_file.name)
 
-# Send the prompt
-#print(f"Question:{video_question}")
-response = model.generate_content([
-    uploaded_file,
-    f"{video_question}",
-])
+# Use Gemini model to analyze the video
+response = client.models.generate_content(
+    model="models/gemini-1.5-pro",  # or "gemini-2.0-pro" when available
+    contents=[
+        uploaded_file,
+        {"text": video_question},
+        "video/mp4"
+    ]
+)
 
-# Print the result
+# Output the model's response
 print(response.text)
-
