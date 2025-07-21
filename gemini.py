@@ -3,6 +3,9 @@ from google import genai
 from google.genai import types
 import time
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Check for arguments
 if len(sys.argv) != 3:
@@ -17,7 +20,7 @@ file_path = f"/var/tmp/{filename}"
 video_question = sys.argv[2]
 
 # Initialize client with API key
-client = genai.Client(api_key="AIzaSyDu_8p38ogl6tNtN8Np7KMzGjacmoIGCPE")
+client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # Upload video file
 uploaded_file = client.files.upload(file=file_path)

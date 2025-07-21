@@ -1,3 +1,4 @@
+dotenv
 google
 google-genai
 #google-generativeai
