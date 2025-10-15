@@ -32,7 +32,7 @@ while uploaded_file.state.name != "ACTIVE":
 
 # Use Gemini model to analyze the video
 response = client.models.generate_content(
-    model="models/gemini-1.5-pro",  # or "gemini-2.0-pro" when available
+    model="models/gemini-2.5-pro",  # or "gemini-2.0-pro" when available
     contents=[
         uploaded_file,
         {"text": video_question},
